@@ -31,7 +31,7 @@ class FRUIT:
 class SNAKE:
     def __init__(self):
         # Initial body
-        self.body = [Vector2(5,10),Vector2(6,10)]
+        self.body = [Vector2(13,13),Vector2(13,12)]
         self.facing = Vector2(1,0)
         self.eat = False
     def draw_snake(self):
@@ -64,6 +64,7 @@ class MAIN:
     def update(self):
         self.viper.move_snake()
         self.check_eat()
+        self.check_lose()
     # Draw the elements
     def draw_game(self):
         self.berry.draw_fruit()
@@ -75,7 +76,18 @@ class MAIN:
             self.berry.position()
             # Add length to snake
             self.viper.lengthen()
+    def check_lose(self):
+        # Check if the snake hits a wall
+        if self.viper.body[0].x < 0 or self.viper.body[0].x > cell_number-1:
+            self.game_end()
+        if self.viper.body[0].y < 0 or self.viper.body[0].y > cell_number-1:
+            self.game_end()
+        for body in self.viper.body[1:]:
+            if body == self.viper.body[0]:
+                self.game_end()
         
+    def game_end(self):
+        pygame.quit()
 
 # Making a timer that'll continuosly move the snake after a certain amount of time
 MOVE_TIMER = pygame.USEREVENT
@@ -118,13 +130,13 @@ def main():
             # Start taking user inputs
             if event.type == pygame.KEYDOWN:
                 # Make the snake go up 
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP and game.viper.facing != Vector2(0,1):
                     game.viper.facing = Vector2(0,-1)
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN and game.viper.facing != Vector2(0,-1):
                     game.viper.facing = Vector2(0,1)
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and game.viper.facing != Vector2(1,0):
                     game.viper.facing = Vector2(-1,0)
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and game.viper.facing != Vector2(-1,0):
                     game.viper.facing = Vector2(1,0)
     
         draw_window()
